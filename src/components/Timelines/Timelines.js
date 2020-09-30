@@ -10,8 +10,6 @@ import './Timelines.scss';
 export default () => {
   const { state, actions } = useOvermind();
 
-  console.log('->', state.options);
-
   return (
     <div className="Timelines">
       <div className="Timelines__date">
@@ -46,7 +44,7 @@ export default () => {
       <div className="Timelines__content">
         {state.options.week.map((day, index) => (
           <Timeline
-            tasks={state.tasks[index] ? state.tasks[index] : []}
+            tasks={state.tasks[index]}
             date={state.week[index]}
             day={day}
             key={index}

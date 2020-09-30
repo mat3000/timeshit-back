@@ -1,62 +1,13 @@
 import { format, addDays, subDays } from 'date-fns';
-import indexedDB from './indexedDB';
 import services from './services';
 import fr from 'date-fns/locale/fr';
 
-// function resolveConflict(tasks, id) {
-//   const tasksCloned = JSON.parse(JSON.stringify(tasks));
-//   const length = tasksCloned.length - 1;
-//   const select_2 = tasksCloned.reduce(
-//     (a, e) => (e.id === id ? e.time : a),
-//     null
-//   );
-
-//   if (!select_2 || !id) return tasks;
-
-//   for (let i = length; i >= 0; i--) {
-//     const select_1 = tasksCloned[i].time;
-
-//     if (tasksCloned[i].id === id) continue;
-
-//     if (
-//       select_1[1] > select_2[0] &&
-//       select_1[0] < select_2[1] &&
-//       select_1[0] < select_2[0] &&
-//       select_1[1] < select_2[1]
-//     ) {
-//       tasksCloned[i].time[1] = select_2[0];
-//     } else if (
-//       select_1[1] > select_2[0] &&
-//       select_1[0] < select_2[1] &&
-//       select_1[0] > select_2[0] &&
-//       select_1[1] > select_2[1]
-//     ) {
-//       tasksCloned[i].time[0] = select_2[1];
-//     } else if (select_2[0] <= select_1[0] && select_1[1] <= select_2[1]) {
-//       tasksCloned.splice(i, 1);
-//     } else if (select_2[0] >= select_1[0] && select_1[1] >= select_2[1]) {
-//       tasksCloned.splice(i, 1);
-//     }
-//   }
-
-//   return tasksCloned;
-// }
-
 export const newTask = async ({ state }, { task, index }) => {
-  // const { tasks } = state.tasks[index];
-  // const id = 9999;
   const newTask = {
     date: format(state.week[index], 'yyyy-MM-dd', { locale: fr }),
     ...task,
   };
-
-  // const test = resolveConflict(tasks, newTask);
-
-  // state.tasks[index].tasks = [...test, newTask];
-
-  // const test = resolveConflict(tasks, [timeStart, timeEnd]);
-
-  const id = await indexedDB('tasks').add(newTask);
+  const id = await services('tasks').save(newTask);
   state.tasks[index].tasks.push({ id, ...newTask });
 };
 
@@ -66,6 +17,7 @@ export const updateTask = (
 ) => {
   const { tasks } = state.tasks[index];
 
+  const newTask = tasks.find((task) => task.id === id);
   const newTasks = tasks.map((task) => {
     if (task.id === id) {
       return {
@@ -78,8 +30,7 @@ export const updateTask = (
 
   state.tasks[index].tasks = newTasks;
 
-  // if (save) indexedDB('options').update({ text: 'okok' });
-  if (save) indexedDB('tasks').update(newTasks);
+  if (save) services('tasks').save(id, newTask);
 };
 
 export const setSelect = (
@@ -108,12 +59,12 @@ export const resetSelect = ({ state }) => {
 export const selectTask = ({ state }, id) => {
   state.taskSelected = id;
 };
+
 export const newTaskStatus = ({ state }, status) => {
   state.newTaskStatus = status;
 };
 
 export const newClient = async ({ state }, client) => {
-  // const id = await indexedDB('clients').add(client);
   const id = services('clients').save(client);
   const newClient = { id, ...client };
 
@@ -138,7 +89,6 @@ export const nextWeek = async ({ state, actions, effects }) => {
 };
 
 export const previousWeek = async ({ state, actions, effects }) => {
-  console.log('cccc');
   actions.resetSelect();
 
   const { weekIndex, datesOfTheWeek } = effects.getDates(

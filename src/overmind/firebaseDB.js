@@ -41,9 +41,25 @@ const firebaseDB = (key) => ({
     return window.database
       .ref(`/${key}/`)
       .once('value')
-      .then(function (snapshot) {
-        return snapshot.val();
-      });
+      .then((snapshot) => snapshot.val());
+  },
+
+  getByIndex: async (index) => {
+    if (!window.database) return Promise.reject();
+    return window.database
+      .ref(`/${key}/${index}`)
+      .once('value')
+      .then((snapshot) => snapshot.val());
+  },
+
+  getByDate: async (date) => {
+    if (!window.database) return Promise.reject();
+    return window.database
+      .ref(`/${key}`)
+      .orderByChild('date')
+      .equalTo(date)
+      .once('value')
+      .then((snapshot) => snapshot.val());
   },
 
   save: async (label, value) => {
@@ -51,7 +67,12 @@ const firebaseDB = (key) => ({
     if (value) {
       return window.database.ref(`/${key}/${label}`).set(value);
     } else {
-      return window.database.ref(`/${key}`).push().set(label);
+      console.log(label);
+      // return window.database.ref(`/${key}`).push().set(label);
+      return window.database
+        .ref(`/${key}`)
+        .push(label)
+        .then((snapshot) => snapshot.key);
     }
   },
 });

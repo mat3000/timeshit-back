@@ -1,14 +1,11 @@
-import indexedDB from './indexedDB';
+// import indexedDB from './indexedDB';
 import services from './services';
 import { format, addDays, startOfWeek } from 'date-fns';
 import fr from 'date-fns/locale/fr';
 
 export const getOptions = async () => {
-  //services().getAll();
   const options = await services('options').getAll();
   return options || {};
-  // const options = await indexedDB('options').getAll();
-  // return options.reduce((a, e) => ({ ...a, [e.label]: e.value }), {});
 };
 
 export const getColors = () => {
@@ -31,14 +28,14 @@ export const getDates = (date, week) => {
 };
 
 export const getTasksByWeek = async (datesOfTheWeek) => {
-  const rawTasks = datesOfTheWeek.map((date) => {
-    return indexedDB('tasks').getByIndex('date', [
-      format(date, 'yyyy-MM-dd', { locale: fr }),
-    ]);
-  });
+  const rawTasks = datesOfTheWeek.map((date) =>
+    services('tasks').getByDate(format(date, 'yyyy-MM-dd', { locale: fr }))
+  );
 
   const tasks = await Promise.all(rawTasks);
-  return tasks.map((e) => ({ tasks: e }));
+  return tasks.map((e) => ({
+    tasks: e ? Object.entries(e).map(([id, val]) => ({ ...val, id })) : [],
+  }));
 
   /* 
   [
@@ -50,19 +47,6 @@ export const getTasksByWeek = async (datesOfTheWeek) => {
           description: 'coucou',
           consider: false,
         },
-        {
-          time: [14, 16],
-          clientId: 2,
-          description: 'machin',
-          consider: true,
-        },
-        {
-          time: [16, 17],
-          clientId: 0,
-          description: 'Congés',
-          consider: true,
-          holiday: true,
-        },
       ],
     },
   ]
@@ -70,7 +54,11 @@ export const getTasksByWeek = async (datesOfTheWeek) => {
 };
 
 export const getClients = async (clientId) => {
-  const clients = await indexedDB('clients').getAll();
+  const rawClients = await services('clients').getAll();
+  const clients = Object.entries(rawClients).map(([id, value]) => ({
+    ...value,
+    id,
+  }));
 
   return [
     {

@@ -42,7 +42,7 @@ const FormNewClient = ({ label, validate, cancel }) => {
         </span>
       </label>
       <button
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           actions
             .newClient({
@@ -51,13 +51,13 @@ const FormNewClient = ({ label, validate, cancel }) => {
               description,
               consider,
             })
-            .then(newClient => validate(newClient));
+            .then((newClient) => validate(newClient));
         }}
       >
         Valider
       </button>
       <button
-        onClick={e => {
+        onClick={(e) => {
           e.preventDefault();
           cancel();
         }}
@@ -102,20 +102,20 @@ const NewTask = () => {
         }}
       >
         <Form
-          onSubmit={formData => {
+          onSubmit={(formData) => {
             // console.log({ ...formData });
             actions.newTask({
               task: {
                 time: [state.select.timeStart, state.select.timeEnd],
                 clientId: formData.client.id,
-                description: formData.description,
+                description: formData.description || '',
                 consider: formData.consider,
               },
               index: state.select.index,
             });
             actions.resetSelect();
           }}
-          getApi={e => {
+          getApi={(e) => {
             formApi.current = e;
           }}
         >

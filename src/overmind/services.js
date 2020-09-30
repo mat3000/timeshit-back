@@ -6,6 +6,7 @@ const services = (key) => ({
     try {
       return await firebaseDB().init();
     } catch (error) {
+      console.log('okok');
       indexedDB()
         .init()
         .then((db) => {
@@ -36,6 +37,20 @@ const services = (key) => ({
     } catch {
       return indexedDB(key).getAll();
     }
+  },
+  getByIndex: (index) => {
+    // try {
+    return firebaseDB(key).getByIndex(index);
+    // } catch {
+    // return indexedDB(key).getAll();
+    // }
+  },
+  getByDate: (date) => {
+    // try {
+    return firebaseDB(key).getByDate(date);
+    // } catch {
+    // return indexedDB(key).getAll();
+    // }
   },
   save: async (label, value) => {
     // try {

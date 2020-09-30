@@ -49,13 +49,13 @@ export default async ({ state, effects }) => {
       [9, 18],
       [9, 18],
       [9, 18],
-      // [9, 17],
+      [9, 17],
     ],
     // week: [[9, 18]],
     // week: [[9, 18], [10, 17]],
     break: { start: 13, end: 14 },
     step: 0.25,
-    //...opt,
+    ...opt,
   };
 
   const minHour = options.week.reduce((a, e) => (e[0] < a ? e[0] : a), 36);
@@ -77,13 +77,11 @@ export default async ({ state, effects }) => {
     options.week
   );
 
-  console.log(options);
-
   state.weekIndex = weekIndex;
   state.week = datesOfTheWeek;
   state.clients = await effects.getClients();
   state.colors = await effects.getColors();
-  // state.tasks = await effects.getTasksByWeek(datesOfTheWeek);
+  state.tasks = await effects.getTasksByWeek(datesOfTheWeek);
   state.options = options;
   state.steps = steps;
 };

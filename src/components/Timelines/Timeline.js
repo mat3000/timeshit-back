@@ -8,7 +8,7 @@ import Select from './Select/Select';
 import { useToolsStep, useEvent, useCumulativeOffset } from '../hooks';
 import './Timeline.scss';
 
-export default ({ tasks, day, index, date }) => {
+export default ({ tasks = { tasks: [] }, day, index, date }) => {
   const timelineRef = createRef();
   const { actions, state } = useOvermind();
   const event = useEvent();
