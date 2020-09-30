@@ -1,4 +1,3 @@
-// import indexedDB from './indexedDB';
 import services from './services';
 import { format, addDays, startOfWeek } from 'date-fns';
 import fr from 'date-fns/locale/fr';
